@@ -5,11 +5,13 @@ from datastore import Datastore
 
 class TestParsing(unittest.TestCase):
     def test_invalid_message(self):
-        legal_message = 'INDEX|cloog|gmp,isl,pkg-config\n'
-        self.assertEqual(str(Message.Error), Datastore().process_message(' ' + legal_message))
-        self.assertEqual(str(Message.Error), Datastore().process_message(legal_message + ' '))
-        self.assertEqual(str(Message.Error), Datastore().process_message(legal_message[:-1]))
-        self.assertEqual(str(Message.Error), Datastore().process_message(legal_message[:-1] + ',' + legal_message[-1:]))
+        legal_messages = ['INDEX|cloog|gmp,isl,pkg-config\n', 'INDEX|ceylon|\n', 'REMOVE|cloog|\n', 'QUERY|cloog|\n']
+        for message in legal_messages:
+            self.assertEqual(str(Message.Error), Datastore().process_message(' ' + message))
+            self.assertEqual(str(Message.Error), Datastore().process_message(message + ' '))
+            self.assertEqual(str(Message.Error), Datastore().process_message(message[:-1]))
+            print ('message', message[:-1] + ',' + message[-1:])
+            self.assertEqual(str(Message.Error), Datastore().process_message(message[:-1] + ',' + message[-1:]))
 
     def test_index_already_exists(self):
         # TODO: pull out state into setup method(s)
