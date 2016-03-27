@@ -1,0 +1,66 @@
+import unittest
+from collections import defaultdict
+from util import Message
+from datastore import Datastore
+
+class TestParsing(unittest.TestCase):
+    def test_invalid_message(self):
+        legal_message = 'INDEX|cloog|gmp,isl,pkg-config\n'
+        self.assertEqual(str(Message.Error), Datastore().process_message(' ' + legal_message))
+        self.assertEqual(str(Message.Error), Datastore().process_message(legal_message + ' '))
+        self.assertEqual(str(Message.Error), Datastore().process_message(legal_message[:-1]))
+        self.assertEqual(str(Message.Error), Datastore().process_message(legal_message[:-1] + ',' + legal_message[-1:]))
+
+    def test_index_already_exists(self):
+        # TODO: pull out state into setup method(s)
+        message = 'INDEX|cloog|gmp,isl,pkg-config\n'
+        dependency_map = {'cloog':[], 'ceylon':['cloog']}
+        datastore = Datastore(dependency_map)
+        self.assertEqual(str(Message.OK), datastore.process_message(message))
+
+    def test_index_with_unindexed_dependency(self):
+        message = 'INDEX|cloog|gmp,isl,pkg-config\n'
+        dependency_map = {'gmp':[], 'isl':['cmake']}
+        datastore = Datastore(dependency_map)
+        self.assertEqual(str(Message.Fail), datastore.process_message(message))
+
+    def test_index_with_all_indexed_dependencies(self):
+        message = 'INDEX|cloog|gmp,isl,pkg-config\n'
+        dependency_map = {'gmp':[], 'isl':['cmake'], 'pkg-config':[]}
+        datastore = Datastore(dependency_map)
+        self.assertEqual(str(Message.OK), datastore.process_message(message))
+
+    def test_remove_already_doesnt_exist(self):
+        message = 'REMOVE|cloog|\n'
+        dependency_map = {}
+        datastore = Datastore(dependency_map)
+        self.assertEqual(str(Message.OK), datastore.process_message(message))
+
+    def test_remove_has_dependents(self):
+        message = 'REMOVE|cloog|\n'
+        dependency_map = {'gmp':['cloog', 'cmake'], 'cloog':[]}
+        dependents_count = {'cloog':1, 'cmake':1}
+        datastore = Datastore(dependency_map, dependents_count)
+        self.assertEqual(str(Message.Fail), datastore.process_message(message))
+
+    def test_remove_exists(self):
+        message = 'REMOVE|cloog|\n'
+        dependency_map = {'gmp':['cmake'], 'cloog':[]}
+        dependents_count = {'cmake':1}
+        datastore = Datastore(dependency_map, dependents_count)
+        self.assertEqual(str(Message.OK), datastore.process_message(message))
+
+    def test_query_exists(self):
+        message = 'QUERY|cloog|\n'
+        dependency_map = {'gmp':['cmake'], 'cloog':[]}
+        datastore = Datastore(dependency_map)
+        self.assertEqual(str(Message.OK), datastore.process_message(message))
+
+    def test_query_doesnt_exist(self):
+        message = 'QUERY|cloog|\n'
+        dependency_map = {'gmp':['cmake']}
+        datastore = Datastore(dependency_map)
+        self.assertEqual(str(Message.Fail), datastore.process_message(message))
+
+if __name__ == '__main__':
+    unittest.main()
