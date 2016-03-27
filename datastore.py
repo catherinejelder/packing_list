@@ -21,18 +21,21 @@ class Datastore(object):
         if not match:
             raise InputError(message)
         command, package, dependency_list = match.group(1), match.group(2), match.group(3).split(',')
-        # print ('command:', command, 'package:', package, 'dependency_list:', dependency_list)
+        if dependency_list == ['']:
+            dependency_list = []
+        print ('command:', command, 'package:', package, 'dependency_list:', dependency_list)
         # test for unnecessary dependency_list
-        if command in ['REMOVE', 'QUERY'] and dependency_list != ['']:
+        if command in ['REMOVE', 'QUERY'] and dependency_list:
             raise InputError(message)
         # test for illegal comma syntax in dependency_list
-        if command == 'INDEX' and dependency_list != [''] and '' in dependency_list: # TODO: replace with better regex
+        if command == 'INDEX' and dependency_list and '' in dependency_list: # TODO: replace with better regex
             raise InputError(message)      
         return command, package, dependency_list
 
     def process_message(self, message):
-        # print ('processing message', message)
-        # print ('self.dependency_map', self.dependency_map)
+        print ('processing message', message)
+        print ('self.dependency_map', self.dependency_map)
+        print ('self.dependents_count', self.dependents_count)
         try:
             command, package, dependency_list = self.parse_message(message)
         except InputError:

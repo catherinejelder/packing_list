@@ -32,6 +32,12 @@ class TestParsing(unittest.TestCase):
         datastore = Datastore(dependency_map)
         self.assertEqual(str(Message.OK), datastore.process_message(message))
 
+    def test_index_with_no_dependencies(self):
+        message = 'INDEX|ceylon|\n'
+        dependency_map = {}
+        datastore = Datastore(dependency_map)
+        self.assertEqual(str(Message.OK), datastore.process_message(message))
+
     def test_remove_already_doesnt_exist(self):
         message = 'REMOVE|cloog|\n'
         dependency_map = {}

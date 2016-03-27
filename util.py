@@ -1,9 +1,9 @@
 from enum import Enum
 
 class Message(Enum):
-    OK = 'OK\\n'
-    Error = 'ERROR\\n'
-    Fail = 'FAIL\\n'
+    OK = 'OK\n'
+    Error = 'ERROR\n'
+    Fail = 'FAIL\n'
 
     def __str__(self):
         return self.value
