@@ -23,7 +23,7 @@ class Datastore(object):
         command, package, dependency_list = match.group(1), match.group(2), match.group(3).split(',')
         if dependency_list == ['']:
             dependency_list = []
-        print ('command:', command, 'package:', package, 'dependency_list:', dependency_list)
+        # print ('command:', command, 'package:', package, 'dependency_list:', dependency_list)
         # test for unnecessary dependency_list
         if command in ['REMOVE', 'QUERY'] and dependency_list:
             raise InputError(message)
@@ -33,9 +33,9 @@ class Datastore(object):
         return command, package, dependency_list
 
     def process_message(self, message):
-        print ('processing message', message)
-        print ('self.dependency_map', self.dependency_map)
-        print ('self.dependents_count', self.dependents_count)
+        # print ('processing message', message)
+        # print ('self.dependency_map', self.dependency_map)
+        # print ('self.dependents_count', self.dependents_count)
         try:
             command, package, dependency_list = self.parse_message(message)
         except InputError:
