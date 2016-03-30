@@ -19,12 +19,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024)
-        request_str = self.data.decode('utf-8')
+        request_str = self.data.decode('ascii')
         # print("{} wrote:".format(self.client_address[0]))
         print('request_str', request_str)
-        reply_str = self.datastore.process_message(request_str)
+        reply_str = self.datastore.process_message(request_str).strip()
+        # reply_str_mod = reply_str.strip() + '\\n'
         print('reply_str', reply_str)           
-        reply_bytes = reply_str.encode('utf-8')
+        reply_bytes = reply_str.encode('ascii')
         self.request.sendall(reply_bytes)
 
 # TODO: replace with datastore access handler

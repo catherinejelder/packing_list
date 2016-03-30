@@ -11,14 +11,8 @@ class Datastore(object):
         self.dependents_count = dependents_count
         print ('datastore __init__ called')
 
-    # def set_self.dependency_map(self.dependency_map):
-    #     self.dependency_map = self.dependency_map
-
-    # def set_self.dependents_count(self.dependents_count):
-    #     self.dependents_count = self.dependents_count
-
     def parse_message(self, message):
-        print ('parse_message called with message', message)
+        # print ('parse_message called with message', message)
         match = re.match('(INDEX|REMOVE|QUERY)\|([\w-]+)\|([,\w-]*)\\n$', message)
         if not match:
             raise InputError(message)
@@ -60,12 +54,19 @@ class Datastore(object):
         return str(Message.OK)
 
     def remove_package(self, package, dependency_list):
-        # print ('dependency_map', self.dependency_map, 'dependents_count', self.dependents_count)
+        # print ('before removing anything', 'dependency_map', self.dependency_map, 'dependents_count', self.dependents_count)
         if package not in self.dependency_map:
             return str(Message.OK)
         if package in self.dependents_count:
             return str(Message.Fail)
+        for dependency in self.dependency_map[package]:
+            # print ('dealing with dependency', dependency)
+            if self.dependents_count[dependency] == 1:
+                del self.dependents_count[dependency]
+            else:
+                self.dependents_count[dependency] -= 1
         del self.dependency_map[package] # TODO: tackle concurrent access by multiple clients to data store
+        # print ('after removal', 'dependency_map', self.dependency_map, 'dependents_count', self.dependents_count)
         return str(Message.OK)
 
     def query_package(self, package):
