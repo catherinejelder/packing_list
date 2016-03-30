@@ -3,7 +3,7 @@ from collections import defaultdict
 from util import Message
 from datastore import Datastore
 
-class TestParsing(unittest.TestCase):
+class TestSingleMessages(unittest.TestCase):
     def test_invalid_message(self):
         legal_messages = ['INDEX|cloog|gmp,isl,pkg-config\n', 'INDEX|ceylon|\n', 'REMOVE|cloog|\n', 'QUERY|cloog|\n']
         for message in legal_messages:
@@ -72,4 +72,3 @@ class TestParsing(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    
