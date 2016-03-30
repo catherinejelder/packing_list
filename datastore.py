@@ -9,6 +9,7 @@ class Datastore(object):
     def __init__(self, dependency_map = {}, dependents_count = defaultdict(int)):
         self.dependency_map = dependency_map
         self.dependents_count = dependents_count
+        print ('datastore __init__ called')
 
     # def set_self.dependency_map(self.dependency_map):
     #     self.dependency_map = self.dependency_map
@@ -17,6 +18,7 @@ class Datastore(object):
     #     self.dependents_count = self.dependents_count
 
     def parse_message(self, message):
+        print ('parse_message called with message', message)
         match = re.match('(INDEX|REMOVE|QUERY)\|([\w-]+)\|([,\w-]*)\\n$', message)
         if not match:
             raise InputError(message)

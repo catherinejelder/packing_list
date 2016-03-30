@@ -1,27 +1,25 @@
 import socket
+import sys
 
-HOST = 'localhost'
-PORT = 8080
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
-# s.sendall('Hello world!')
+def send_to_server(data):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Connect to server and send data
+        sock.connect((HOST, PORT))
+        sock.sendall(bytes(data + "\n", "utf-8"))
 
-legal_messages = [b'INDEX|cloog|gmp,isl,pkg-config\n', b'INDEX|cloog|\n', b'QUERY|cloog|\n', b'REMOVE|cloog|\n', b'REMOVE|cloog|bla\n', b'QUERY|cloog|\n']
-print ('request_messages', legal_messages)
+        # Receive data from the server and shut down
+        received = str(sock.recv(1024), "utf-8")
+    finally:
+        sock.close()
 
-reply_messages = []
+    print("Sent:     {}".format(data))
+    print("Received: {}".format(received))
 
-for message in legal_messages:
-    s.sendall(message)
-    reply_bytes = s.recv(1024)
-    reply_messages.append(str(reply_bytes))
+HOST, PORT = "localhost", 8080
+data = 'INDEX|cloog|\n'
 
-# data_1 = s.recv(1024)
+legal_messages = ['INDEX|cloog|gmp,isl,pkg-config\n', 'INDEX|cloog|\n', 'QUERY|cloog|\n', 'REMOVE|cloog|\n', 'REMOVE|cloog|bla\n', 'QUERY|cloog|\n']
 
-s.close()
-# reply_str_1 = str(data_1)
-# reply_str_2 = str(data_2)
-
-# print ('received reply_1', reply_str_1)
-# print ('received reply_2', reply_str_2)
-print ('reply_messages', reply_messages)
+for mess in legal_messages:
+    send_to_server(mess)
