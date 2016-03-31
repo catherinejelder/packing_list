@@ -1,12 +1,12 @@
 import re
-import threading
 from collections import defaultdict
+from threading import Lock
 from util import Message, InputError
 
 class Datastore(object):
     def __init__(self, dependency_map = {}, dependents_count = defaultdict(int)):
         # TODO: achieve better performance via a reader-writer lock. any number of concurrent reads could be allowed, if no concurrent write is occurring.
-        self.lock = threading.Lock()
+        self.lock = Lock()
         self.dependency_map = dependency_map
         self.dependents_count = dependents_count
 

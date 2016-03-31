@@ -1,5 +1,4 @@
 import socket
-import sys
 import unittest
 
 def get_reply(data):

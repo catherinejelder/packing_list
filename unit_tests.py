@@ -1,5 +1,4 @@
 import unittest
-from collections import defaultdict
 from util import Message
 from datastore import Datastore
 
@@ -8,7 +7,7 @@ class TestSingleMessages(unittest.TestCase):
     Ensure a single message passed to a given datastore gets the expected response.
     """
 
-    def test_valid_unusual_package_names(self):
+    def test_valid_but_unusual_package_names(self):
         legal_messages = ['REMOVE|png++|\n', 'REMOVE|pkg-config|\n', 'REMOVE|mysql-connector-c++|\n']
         for message in legal_messages:
             self.assertNotEqual(str(Message.Error), Datastore().process_message(message))
