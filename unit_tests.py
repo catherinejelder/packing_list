@@ -1,5 +1,5 @@
 import unittest
-from util import Message
+from message import Message
 from datastore import Datastore
 
 class TestSingleMessages(unittest.TestCase):

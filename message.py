@@ -8,7 +8,7 @@ class Message(Enum):
     def __str__(self):
         return self.value
 
-class InputError(Exception):
+class MessageError(Exception):
     def __init__(self, message):
         self.message = message
 

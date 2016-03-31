@@ -1,39 +1,47 @@
 import re
 from collections import defaultdict
 from threading import Lock
-from util import Message, InputError
+from message import Message, MessageError
+
+def parse_message(message):
+    """Parse an incoming message and throw an MessageError if it is not correctly formatted."""
+    # TODO: improve regex to filter out syntactially incorrect dependency lists (misplaced commas)
+    match = re.match('(INDEX|REMOVE|QUERY)\|([+\w-]+)\|([,+\w-]*)\\n$', message)
+    if not match:
+        raise MessageError(message)
+    command, package, dependency_list = match.group(1), match.group(2), match.group(3).split(',')
+    if dependency_list == ['']:
+        dependency_list = []
+    # test for unnecessary existence of dependency_list
+    if command in ['REMOVE', 'QUERY'] and dependency_list:
+        raise MessageError(message)
+    # test for illegal comma syntax in dependency_list
+    if command == 'INDEX' and dependency_list and '' in dependency_list:
+        raise MessageError(message)
+    return command, package, dependency_list
+
 
 class Datastore(object):
-    def __init__(self, dependency_map = {}, dependents_count = defaultdict(int)):
+    """This class stores all indexed packages and their dependencies.
+
+    Attributes:
+        dependency_map      maps an indexed package to its dependencies (packages that need to be indexed before it is)
+        dependents_count    maps an indexeded package to the number of packages that have it as a dependency
+    """
+    def __init__(self, dependency_map={}, dependents_count=defaultdict(int)):
         # TODO: achieve better performance via a reader-writer lock. any number of concurrent reads could be allowed, if no concurrent write is occurring.
         self.lock = Lock()
         self.dependency_map = dependency_map
         self.dependents_count = dependents_count
 
-    def parse_message(self, message):
-        # TODO: improve regex to filter out syntactially incorrect dependency lists (misplaced commas)
-        match = re.match('(INDEX|REMOVE|QUERY)\|([+\w-]+)\|([,+\w-]*)\\n$', message)
-        if not match:
-            raise InputError(message)
-        command, package, dependency_list = match.group(1), match.group(2), match.group(3).split(',')
-        if dependency_list == ['']:
-            dependency_list = []
-        # test for unnecessary existence of dependency_list
-        if command in ['REMOVE', 'QUERY'] and dependency_list:
-            raise InputError(message)
-        # test for illegal comma syntax in dependency_list
-        if command == 'INDEX' and dependency_list and '' in dependency_list:
-            raise InputError(message)      
-        return command, package, dependency_list
-
     def process_message(self, message):
         try:
-            command, package, dependency_list = self.parse_message(message)
-        except InputError:
+            command, package, dependency_list = parse_message(message)
+        except MessageError:
             return str(Message.Error)
-        if 'INDEX' == command:
+        if command == 'INDEX':
             return self.index_package(package, dependency_list)
-        if 'REMOVE' == command:
+        if command == 'REMOVE':
             return self.remove_package(package)
         return self.query_package(package)
 
