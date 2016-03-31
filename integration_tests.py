@@ -5,8 +5,8 @@ import unittest
 def send_to_server(data):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(("192.168.99.100", 8080))
-        # sock.connect(("localhost", 8080))
+        # sock.connect(("192.168.99.100", 8080))
+        sock.connect(("localhost", 8080))
         # sock.sendall(bytes(data + "\n", "ascii"))
         sock.sendall(bytes(data, "ascii"))
         received = str(sock.recv(1024), "ascii")
