@@ -1,5 +1,4 @@
 import re
-import logging
 import threading
 from collections import defaultdict
 from util import Message, InputError
@@ -12,7 +11,7 @@ class Datastore(object):
         self.dependents_count = dependents_count
 
     def parse_message(self, message):
-        # TODO: improve regex to filter out non syntactially correct dependency lists
+        # TODO: improve regex to filter out syntactially incorrect dependency lists (misplaced commas)
         match = re.match('(INDEX|REMOVE|QUERY)\|([+\w-]+)\|([,+\w-]*)\\n$', message)
         if not match:
             raise InputError(message)
