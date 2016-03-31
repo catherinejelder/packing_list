@@ -3,7 +3,11 @@
 A simple package indexing service. API details withheld for the moment.
 Tested with python 3.5.
 
-To run, clone the repo, cd into it, then build the dockerfile:
+To run, first pull the docker image from Docker Hub:
+```bash
+docker pull catherinejelder/packing_list
+```
+Build the dockerfile:
 ```bash
 docker build -t packing_list .
 ```
