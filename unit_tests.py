@@ -4,7 +4,12 @@ from util import Message
 from datastore import Datastore
 
 class TestSingleMessages(unittest.TestCase):
-    def test_invalid_message(self):
+    def test_valid_unusual_package_names(self):
+        legal_messages = ['REMOVE|png++|\n', 'REMOVE|libxml++|\n', 'REMOVE|libsigc++|\n', 'REMOVE|mysql-connector-c++|\n']
+        for message in legal_messages:
+            self.assertEqual(str(Message.OK), Datastore().process_message(message))
+
+    def test_invalid_messages(self):
         legal_messages = ['INDEX|cloog|gmp,isl,pkg-config\n', 'INDEX|ceylon|\n', 'REMOVE|cloog|\n', 'QUERY|cloog|\n']
         for message in legal_messages:
             self.assertEqual(str(Message.Error), Datastore().process_message(' ' + message))
@@ -14,7 +19,6 @@ class TestSingleMessages(unittest.TestCase):
             self.assertEqual(str(Message.Error), Datastore().process_message(message[:-1] + ',' + message[-1:]))
 
     def test_index_already_exists(self):
-        # TODO: pull out state into setup method(s)
         message = 'INDEX|cloog|gmp,isl,pkg-config\n'
         dependency_map = {'cloog':[], 'ceylon':['cloog']}
         datastore = Datastore(dependency_map)
