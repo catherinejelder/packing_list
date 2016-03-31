@@ -28,4 +28,5 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 if __name__ == "__main__":
     HOST, PORT = "0.0.0.0", 8080
     server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
+    logging.info('starting server')
     server.serve_forever()
