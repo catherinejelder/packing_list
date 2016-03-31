@@ -7,7 +7,7 @@ To run, pull the docker image from Docker Hub:
 ```bash
 docker pull catherinejelder/packing_list
 ```
-And run the dockerfile:
+And run the container:
 ```bash
 docker run -d --name packing_list_app -p 8080:8080 catherinejelder/packing_list
 ```
