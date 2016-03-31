@@ -1,11 +1,15 @@
 import socketserver
 from datastore import Datastore
+import logging
+import threading
 
-class MyTCPServer(socketserver.TCPServer):
+logging.basicConfig(filename='server.log', level=logging.INFO, format='%(asctime)s %(message)s')
+
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     request_queue_size = 100
 
 
-class TCPHandler(socketserver.StreamRequestHandler):
+class ThreadedTCPHandler(socketserver.StreamRequestHandler):
     """
     The request handler class for our server.
 
@@ -16,18 +20,18 @@ class TCPHandler(socketserver.StreamRequestHandler):
     def handle(self):
         # self.datastore = get_datastore_ref()
         # print('type of self.rfile', type(self.rfile))
+        cur_thread = threading.current_thread()
         for line in self.rfile:
             # self.data = self.rfile.readline()
 
             # print("{} wrote:".format(self.client_address[0]))
             # print(self.data)
 
-            # request_str = self.data.decode('ascii')
-            request_str = line.decode('ascii')
-            print('request_str', request_str)
+            request_str = line.decode('utf-8')
+            logging.info('from port ' + str(self.client_address[1]) + ', request_str ' + request_str)
             reply_str = get_datastore_ref().process_message(request_str)
-            print('reply_str', reply_str)
-            reply_bytes = reply_str.encode('ascii')
+            logging.info('thread ' + cur_thread.name + ', for port ' + str(self.client_address[1]) + ', reply_str ' + reply_str)
+            reply_bytes = reply_str.encode('utf-8')
             self.wfile.write(reply_bytes)
 
 
@@ -40,5 +44,5 @@ def get_datastore_ref():
 if __name__ == "__main__":
     # HOST, PORT = "localhost", 8080
     HOST, PORT = "0.0.0.0", 8080
-    server = MyTCPServer((HOST, PORT), TCPHandler)
+    server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
     server.serve_forever()
