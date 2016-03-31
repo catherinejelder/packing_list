@@ -4,18 +4,24 @@ from util import Message
 from datastore import Datastore
 
 class TestSingleMessages(unittest.TestCase):
+    """
+    Ensure a single message passed to a given datastore gets the expected response.
+    """
+
     def test_valid_unusual_package_names(self):
-        legal_messages = ['REMOVE|png++|\n', 'REMOVE|libxml++|\n', 'REMOVE|libsigc++|\n', 'REMOVE|mysql-connector-c++|\n']
+        legal_messages = ['REMOVE|png++|\n', 'REMOVE|pkg-config|\n', 'REMOVE|mysql-connector-c++|\n']
         for message in legal_messages:
-            self.assertEqual(str(Message.OK), Datastore().process_message(message))
+            self.assertNotEqual(str(Message.Error), Datastore().process_message(message))
 
     def test_invalid_messages(self):
         legal_messages = ['INDEX|cloog|gmp,isl,pkg-config\n', 'INDEX|ceylon|\n', 'REMOVE|cloog|\n', 'QUERY|cloog|\n']
         for message in legal_messages:
+            # assert original message is not broken
+            self.assertNotEqual(str(Message.Error), Datastore().process_message(message))
+            # assert mangled message is broken
             self.assertEqual(str(Message.Error), Datastore().process_message(' ' + message))
             self.assertEqual(str(Message.Error), Datastore().process_message(message + ' '))
             self.assertEqual(str(Message.Error), Datastore().process_message(message[:-1]))
-            print ('message', message[:-1] + ',' + message[-1:])
             self.assertEqual(str(Message.Error), Datastore().process_message(message[:-1] + ',' + message[-1:]))
 
     def test_index_already_exists(self):

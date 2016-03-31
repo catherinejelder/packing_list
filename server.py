@@ -18,8 +18,6 @@ class ThreadedTCPHandler(socketserver.StreamRequestHandler):
     client.
     """
     def handle(self):
-        # self.datastore = get_datastore_ref()
-        # print('type of self.rfile', type(self.rfile))
         cur_thread = threading.current_thread()
         for line in self.rfile:
             # self.data = self.rfile.readline()
