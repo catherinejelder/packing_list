@@ -22,8 +22,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         request_str = self.data.decode('ascii')
         # print("{} wrote:".format(self.client_address[0]))
         print('request_str', request_str)
-        reply_str = self.datastore.process_message(request_str).strip()
-        # reply_str_mod = reply_str.strip() + '\\n'
+        reply_str = self.datastore.process_message(request_str)
         print('reply_str', reply_str)           
         reply_bytes = reply_str.encode('ascii')
         self.request.sendall(reply_bytes)
@@ -34,7 +33,8 @@ def get_datastore_ref():
     return DATASTORE
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 8080
+    # HOST, PORT = "localhost", 8080
+    HOST, PORT = "0.0.0.0", 8080
     server = MyTCPServer((HOST, PORT), MyTCPHandler)
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
