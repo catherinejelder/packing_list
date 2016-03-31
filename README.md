@@ -1,7 +1,6 @@
 # packing_list
-A simple package indexer
 
-A simple package indexer. API details withheld for the moment.
+A simple package indexing service. API details withheld for the moment.
 Tested with python 3.5.
 
 To run, clone the repo, cd into it, then build the dockerfile:
