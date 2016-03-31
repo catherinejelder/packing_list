@@ -34,7 +34,7 @@ class Datastore(object):
         if 'INDEX' == command:
             return self.index_package(package, dependency_list)
         if 'REMOVE' == command:
-            return self.remove_package(package, dependency_list)
+            return self.remove_package(package)
         return self.query_package(package)
 
     def index_package(self, package, dependency_list):
@@ -49,7 +49,7 @@ class Datastore(object):
                 self.dependents_count[dependency] += 1
             return str(Message.OK)
 
-    def remove_package(self, package, dependency_list):
+    def remove_package(self, package):
         with self.lock:
             if package not in self.dependency_map:
                 return str(Message.OK)
