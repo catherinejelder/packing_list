@@ -2,7 +2,6 @@ import socketserver
 from datastore import Datastore
 
 class MyTCPServer(socketserver.TCPServer):
-    allow_reuse_address = True
     request_queue_size = 100
 
 
@@ -16,16 +15,20 @@ class TCPHandler(socketserver.StreamRequestHandler):
     """
     def handle(self):
         # self.datastore = get_datastore_ref()
-        self.data = self.rfile.readline()
-        # print("{} wrote:".format(self.client_address[0]))
-        # print(self.data)
+        # print('type of self.rfile', type(self.rfile))
+        for line in self.rfile:
+            # self.data = self.rfile.readline()
 
-        request_str = self.data.decode('ascii')
-        print('request_str', request_str)
-        reply_str = get_datastore_ref().process_message(request_str)
-        print('reply_str', reply_str) 
-        reply_bytes = reply_str.encode('ascii')
-        self.wfile.write(reply_bytes)
+            # print("{} wrote:".format(self.client_address[0]))
+            # print(self.data)
+
+            # request_str = self.data.decode('ascii')
+            request_str = line.decode('ascii')
+            print('request_str', request_str)
+            reply_str = get_datastore_ref().process_message(request_str)
+            print('reply_str', reply_str)
+            reply_bytes = reply_str.encode('ascii')
+            self.wfile.write(reply_bytes)
 
 
 # TODO: replace with datastore access handler
