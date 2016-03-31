@@ -1,7 +1,7 @@
 # packing_list
 
 A simple package indexing service. API details withheld for the moment.
-Tested with python 3.5.
+Tested on ubuntu.
 
 To run, pull the docker image from Docker Hub:
 ```bash
